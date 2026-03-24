@@ -74,6 +74,7 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 			3.append the  instance into product list
 
 	*/
+	
 	var newProduct Product
 
 	decoder := json.NewDecoder(r.Body)
