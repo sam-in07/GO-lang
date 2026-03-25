@@ -8,7 +8,7 @@ https://github.com/vipullsingh/product-listing-react
 
 Options => Preflight Req 
 
-![alt text](image.png)
+![alt text](____z/image.png)
 
 
 SOLID fomrate =>
