@@ -37,16 +37,9 @@ type Product struct {
 var productList []Product
 
 func getProducts(w http.ResponseWriter, r *http.Request) {
-	//allow accesss
-	w.Header().Set("Access-Control-Allow-Origin", "*") //je access chaibe tare allow kore dibo
-	w.Header().Set("Access-Control-Allow-Methods", "POST")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Content-Type", "application/json")
+	handleCors(w)
 
-	if r.Method =="OPTIONS" {
-		w.WriteHeader(200)
-		return
-	}
+	handlePreflightReq(w, r)
 
 	if r.Method != "GET" {
 		http.Error(
@@ -54,18 +47,17 @@ func getProducts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//if r.Method != http.MethodGet or if r.Method != "GET"
-	encoder := json.NewEncoder(w) //We use json.NewEncoder() to encode and send JSON efficiently to an io.Writer.
-	encoder.Encode(productList)
+	// encoder := json.NewEncoder(w)
+	//We use json.NewEncoder() to encode and send JSON efficiently to an io.Writer.
+	// encoder.Encode(productList)
 	//Convert productList to JSON and write it directly to the response.
+
+	sendData(w, productList, 200)
 }
 
 func createProduct(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(200)
-		return
-	}
+	handleCors(w)
+	handlePreflightReq(w, r)
 	if r.Method != "POST" {
 		http.Error(w, "PLZ! Give me post req", 400)
 	}
@@ -97,10 +89,32 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 	newProduct.ID = len(productList) + 1
 
 	productList = append(productList, newProduct)
+
+	sendData(w, newProduct, 201)
+
+}
+
+func handleCors(w http.ResponseWriter) {
+	//allow accesss
+	w.Header().Set("Access-Control-Allow-Origin", "*") //je access chaibe tare allow kore dibo
+	w.Header().Set("Access-Control-Allow-Methods", "GET , POST , PUT , PATCH , DELETE , OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func handlePreflightReq(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(200)
+
+	}
+}
+
+func sendData(w http.ResponseWriter, data interface{}, statuscode int) {
 	//json theke kono kichu pathiete Encoder
-	w.WriteHeader(201)
+	w.WriteHeader(statuscode)
 	encoder := json.NewEncoder(w) //We use json.NewEncoder() to encode and send JSON efficiently to an io.Writer.
-	encoder.Encode(newProduct)
+	encoder.Encode(data)
+
 }
 
 func main() {
