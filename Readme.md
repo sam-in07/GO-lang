@@ -8,7 +8,7 @@ https://github.com/vipullsingh/product-listing-react
 
 Options => Preflight Req 
 
-![alt text](____z/image.png)
+![alt text](____z/image1.png)
 
 
 SOLID fomrate =>
@@ -17,3 +17,7 @@ O: Open/Closed Principle (OCP)
 L: Liskov Substitution Principle (LSP)
 I: Interface Segregation Principle (ISP)
 D: Dependency Inversion Principle (DIP)
+
+
+
+inception => newtork part status checking 

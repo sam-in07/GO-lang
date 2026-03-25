@@ -39,13 +39,16 @@ var productList []Product
 func getProducts(w http.ResponseWriter, r *http.Request) {
 	handleCors(w)
 
-	handlePreflightReq(w, r)
-
-	if r.Method != "GET" {
-		http.Error(
-			w, "Plsz give me Get req", 400)
+	if r.Method == "OPTIONS" {
+		handlePreflightReq(w, r)
 		return
 	}
+
+	// if r.Method != "GET" {
+	// 	http.Error(
+	// 		w, "Plsz give me Get req", 400)
+	// 	return
+	// }
 	//if r.Method != http.MethodGet or if r.Method != "GET"
 	// encoder := json.NewEncoder(w)
 	//We use json.NewEncoder() to encode and send JSON efficiently to an io.Writer.
@@ -57,10 +60,15 @@ func getProducts(w http.ResponseWriter, r *http.Request) {
 
 func createProduct(w http.ResponseWriter, r *http.Request) {
 	handleCors(w)
-	handlePreflightReq(w, r)
-	if r.Method != "POST" {
-		http.Error(w, "PLZ! Give me post req", 400)
+	if r.Method == "OPTIONS" {
+		handlePreflightReq(w, r)
+		return
 	}
+
+	//apply advance routing this dont need
+	// if r.Method != "POST" {
+	// 	http.Error(w, "PLZ! Give me post req", 400)
+	// }
 
 	//r.body => desc , imageUrl , price , title => Product ar akta instance => pOrduct list => append
 	/*
@@ -120,10 +128,14 @@ func sendData(w http.ResponseWriter, data interface{}, statuscode int) {
 func main() {
 	mux := http.NewServeMux() //req router
 
-	mux.HandleFunc("/", helloHandler)
-	mux.HandleFunc("/about", aboutHNandler)
-	mux.HandleFunc("/products", getProducts)
-	mux.HandleFunc("/create-products", createProduct)
+	mux.Handle("GET /hellow", http.HandlerFunc(helloHandler))
+	mux.Handle("GET /about", http.HandlerFunc(aboutHNandler))
+	mux.Handle("GET /products", http.HandlerFunc(getProducts))
+	//options naile   front a show korbe na products
+	mux.Handle("OPTIONS /products", http.HandlerFunc(getProducts))
+	mux.Handle("POST /create-products", http.HandlerFunc(createProduct))
+	//create proe show korte ow options lagbe
+	mux.Handle("OPTIONS /create-products", http.HandlerFunc(createProduct))
 
 	fmt.Println("seever running on:8080")
 
@@ -187,6 +199,15 @@ func init() {
 	productList = append(productList, prd3)
 	productList = append(productList, prd4)
 	productList = append(productList, prd5)
+}
+
+func handleCorsMiddleware() {
+	handleCors := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*") //je access chaibe tare allow kore dibo
+		w.Header().Set("Access-Control-Allow-Methods", "GET , POST , PUT , PATCH , DELETE , OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Content-Type", "application/json")
+	}
 }
 
 //Because Go data (like structs, slices) cannot be understood directly outside your program.
