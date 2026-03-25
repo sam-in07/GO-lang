@@ -27,7 +27,7 @@ r *http.Request → contains request data (URL, headers, etc.)
 
 type Product struct {
 	ID          int `json:"id"` ///avbe likhle choto hater hoye likha jabe tokhon
-	Title       string 
+	Title       string
 	Description string
 	Price       float64
 	ImgUrl      string
@@ -37,13 +37,16 @@ type Product struct {
 var productList []Product
 
 func getProducts(w http.ResponseWriter, r *http.Request) {
-	//allow accesss 
+	//allow accesss
 	w.Header().Set("Access-Control-Allow-Origin", "*") //je access chaibe tare allow kore dibo
-	w.Header().Set("Access-Control-Allow-Methods","POST")
-	w.Header().Set("Access-Control-Allow-Headers","Content-Type")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 
-
+	if r.Method =="OPTIONS" {
+		w.WriteHeader(200)
+		return
+	}
 
 	if r.Method != "GET" {
 		http.Error(
@@ -59,7 +62,7 @@ func getProducts(w http.ResponseWriter, r *http.Request) {
 func createProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-    if r.Method == "OPTIONS" {
+	if r.Method == "OPTIONS" {
 		w.WriteHeader(200)
 		return
 	}
@@ -74,7 +77,7 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 			3.append the  instance into product list
 
 	*/
-	
+
 	var newProduct Product
 
 	decoder := json.NewDecoder(r.Body)
