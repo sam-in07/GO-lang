@@ -130,7 +130,9 @@ func main() {
 
 	mux.Handle("GET /hellow", http.HandlerFunc(helloHandler))
 	mux.Handle("GET /about", http.HandlerFunc(aboutHNandler))
-	mux.Handle("GET /products", http.HandlerFunc(getProducts))
+
+	// mux.Handle("GET /products", http.HandlerFunc(getProducts))
+	mux.Handle("GET /products", handleCorsMiddleware(http.HandlerFunc(getProducts)))
 	//options naile   front a show korbe na products
 	mux.Handle("OPTIONS /products", http.HandlerFunc(getProducts))
 	mux.Handle("POST /create-products", http.HandlerFunc(createProduct))
@@ -138,8 +140,9 @@ func main() {
 	mux.Handle("OPTIONS /create-products", http.HandlerFunc(createProduct))
 
 	fmt.Println("seever running on:8080")
+	globarRouter := globarRouter(mux)
 
-	err := http.ListenAndServe(":8080", mux)
+	err := http.ListenAndServe(":8080", globarRouter)
 
 	if err != nil {
 		fmt.Println("error stRTING server ", err)
@@ -201,13 +204,35 @@ func init() {
 	productList = append(productList, prd5)
 }
 
-func handleCorsMiddleware() {
+func handleCorsMiddleware(next http.Handler) http.Handler {
 	handleCors := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*") //je access chaibe tare allow kore dibo
 		w.Header().Set("Access-Control-Allow-Methods", "GET , POST , PUT , PATCH , DELETE , OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Set("Content-Type", "application/json")
+
+		next.ServeHTTP(w, r)
+
+		//get product handler
 	}
+	handle := http.HandlerFunc(handleCors)
+	return handle
 }
 
-//Because Go data (like structs, slices) cannot be understood directly outside your program.
+// Because Go data (like structs, slices) cannot be understood directly outside your program.
+// routes => method => options => cors => sending status
+func globarRouter(mux *http.ServeMux) http.Handler {
+	handelAllReq := func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "OPTIONS" {
+			w.Header().Set("Access-Control-Allow-Origin", "*") //je access chaibe tare allow kore dibo
+			w.Header().Set("Access-Control-Allow-Methods", "GET , POST , PUT , PATCH , DELETE , OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+		}else{
+			mux.ServeHTTP(w,r)
+		}
+	}
+	handleReq := http.HandlerFunc(handelAllReq)
+	return handleReq
+}
