@@ -21,3 +21,5 @@ D: Dependency Inversion Principle (DIP)
 
 
 inception => newtork part status checking 
+
+37:44
