@@ -5,17 +5,15 @@ import (
 	"ecomm/hadlers"
 	"ecomm/middleware"
 	"fmt"
-	"log"
 	"net/http"
 )
 
 func Server() {
 	mux := http.NewServeMux() //req router
-	cntrl := func(w http.ResponseWriter, r *http.Request) {
-          log.Println("ami handler")
-	}
-	handler := http.HandlerFunc(cntrl)
-
+	// cntrl := func(w http.ResponseWriter, r *http.Request) {
+	//       log.Println("ami handler : middle a print hobo")
+	// }
+	handler := http.HandlerFunc(hadlers.Test)
 	// mux.Handle("GET /hellow", http.HandlerFunc(helloHandler))
 	// mux.Handle("GET /about", http.HandlerFunc(aboutHNandler))
 	mux.Handle("GET /route", middleware.Logger(handler))
