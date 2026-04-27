@@ -1,10 +1,11 @@
-package global_router
+package middleware
 
 import "net/http"
 
 // routes => method => options => cors => sending status
-func GlobarRouter(mux *http.ServeMux) http.Handler {
-	handelAllReq := func(w http.ResponseWriter, r *http.Request) {
+func CorsWithPreflight(next *http.ServeMux) http.Handler {
+
+	handleReq := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//halde cors
 		w.Header().Set("Access-Control-Allow-Origin", "*") //je access chaibe tare allow kore dibo
 		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
@@ -16,10 +17,9 @@ func GlobarRouter(mux *http.ServeMux) http.Handler {
 			return
 		}
 		//options req ase nai Cors handle holo then it goes mux.server
-		mux.ServeHTTP(w, r)
+		next.ServeHTTP(w, r)
 
-	}
-	handleReq := http.HandlerFunc(handelAllReq)
+	})
 	return handleReq
 }
 

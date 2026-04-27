@@ -12,7 +12,8 @@ func initRoutes(mux *http.ServeMux, manager *middleware.Manager) {
 	))
 	mux.Handle("GET /route", manager.With(
 		http.HandlerFunc(hadlers.Test),
-	))
+	),
+)
 
 	mux.Handle("GET /products", manager.With(
 		http.HandlerFunc(hadlers.GetProducts),

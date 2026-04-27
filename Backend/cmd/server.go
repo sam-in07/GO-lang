@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"ecomm/global_router"
 	"ecomm/middleware"
 	"fmt"
 	"net/http"
@@ -17,7 +16,7 @@ func Server() {
 	mux := http.NewServeMux() //req router
 	initRoutes(mux, manager)
 	fmt.Println("seever running on:8080")
-	globarRouter := global_router.GlobarRouter(mux)
+	globarRouter := middleware.CorsWithPreflight(mux)
 
 	err := http.ListenAndServe(":8080", globarRouter)
 
