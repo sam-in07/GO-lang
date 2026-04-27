@@ -9,22 +9,37 @@ import (
 )
 
 func Server() {
+
+	manager := middleware.NewManager()
+
 	mux := http.NewServeMux() //req router
-	// cntrl := func(w http.ResponseWriter, r *http.Request) {
-	//       log.Println("ami handler : middle a print hobo")
-	// }
-	handler := http.HandlerFunc(hadlers.Test)
-	// mux.Handle("GET /hellow", http.HandlerFunc(helloHandler))
-	// mux.Handle("GET /about", http.HandlerFunc(aboutHNandler))
-	mux.Handle("GET /route", middleware.Logger(handler))
-	// mux.Handle("GET /products", http.HandlerFunc(getProducts))
-	mux.Handle("GET /products", (http.HandlerFunc(hadlers.GetProducts)))
-	//options naile   front a show korbe na products
-	// mux.Handle("OPTIONS /products", http.HandlerFunc(getProducts))
-	mux.Handle("POST /create-products", (http.HandlerFunc(hadlers.CreateProduct)))
-	//create proe show korte ow options lagbe
-	// mux.Handle("OPTIONS /create-products", http.HandlerFunc(createProduct))
-	mux.Handle("GET /products/{id}", (http.HandlerFunc(hadlers.GetProductByID)))
+	mux.Handle("GET /rah", manager.With(
+		http.HandlerFunc(hadlers.Test),
+		middleware.Logger,
+		middleware.Hudai,
+	))
+	mux.Handle("GET /route", manager.With(
+		http.HandlerFunc(hadlers.Test),
+		middleware.Logger,
+		middleware.Hudai,
+	))
+
+	mux.Handle("GET /products", manager.With(
+		http.HandlerFunc(hadlers.GetProducts),
+		middleware.Logger,
+		middleware.Hudai,
+	))
+	mux.Handle("POST /create-products", manager.With(
+		http.HandlerFunc(hadlers.CreateProduct),
+		middleware.Logger,
+		middleware.Hudai,
+	))
+
+	mux.Handle("GET /products/{id}", manager.With(
+		http.HandlerFunc(hadlers.GetProductByID),
+		middleware.Logger,
+		middleware.Hudai,
+	))
 	fmt.Println("seever running on:8080")
 	globarRouter := global_router.GlobarRouter(mux)
 
