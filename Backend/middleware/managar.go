@@ -32,7 +32,15 @@ func (mngr *Manager) With(next http.Handler, middleware ...Middleware) http.Hand
 	for _, middleware := range middleware {
 		n = middleware(n)
 	}
+  
+	for _, globalMiddlewares := range mngr.globalMiddlewares{
+		n = globalMiddlewares(n)
+	}
+        
 
 	// Now n is the final http.Handler, which matches the return type
+	
+	
+	
 	return n
 }

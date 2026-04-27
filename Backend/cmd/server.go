@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"ecomm/global_router"
-	"ecomm/hadlers"
 	"ecomm/middleware"
 	"fmt"
 	"net/http"
@@ -12,34 +11,11 @@ func Server() {
 
 	manager := middleware.NewManager()
 
+	manager.Use(middleware.Logger,
+		middleware.Hudai)
+
 	mux := http.NewServeMux() //req router
-	mux.Handle("GET /rah", manager.With(
-		http.HandlerFunc(hadlers.Test),
-		middleware.Logger,
-		middleware.Hudai,
-	))
-	mux.Handle("GET /route", manager.With(
-		http.HandlerFunc(hadlers.Test),
-		middleware.Logger,
-		middleware.Hudai,
-	))
-
-	mux.Handle("GET /products", manager.With(
-		http.HandlerFunc(hadlers.GetProducts),
-		middleware.Logger,
-		middleware.Hudai,
-	))
-	mux.Handle("POST /create-products", manager.With(
-		http.HandlerFunc(hadlers.CreateProduct),
-		middleware.Logger,
-		middleware.Hudai,
-	))
-
-	mux.Handle("GET /products/{id}", manager.With(
-		http.HandlerFunc(hadlers.GetProductByID),
-		middleware.Logger,
-		middleware.Hudai,
-	))
+	initRoutes(mux, manager)
 	fmt.Println("seever running on:8080")
 	globarRouter := global_router.GlobarRouter(mux)
 
